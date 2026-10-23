@@ -1,0 +1,1 @@
+"""PreventVital FastAPI application package."""

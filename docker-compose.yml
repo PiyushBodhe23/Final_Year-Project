@@ -1,0 +1,19 @@
+# Optional Postgres. The demo defaults to SQLite and does not need this file.
+#   docker compose --profile postgres up -d
+#   $env:DATABASE_URL = "postgresql+psycopg://preventvital:preventvital@localhost:5432/preventvital"
+
+services:
+  db:
+    image: postgres:16
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_USER: preventvital
+      POSTGRES_PASSWORD: preventvital
+      POSTGRES_DB: preventvital
+    ports:
+      - "5432:5432"
+    volumes:
+      - preventvital_pg:/var/lib/postgresql/data
+
+volumes:
+  preventvital_pg:

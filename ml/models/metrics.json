@@ -1,0 +1,196 @@
+{
+  "disclaimer": "PreventVital is an academic risk-screening prototype trained on public and synthetic data. It is not a diagnostic device and it is not clinically validated. Discuss results with a qualified clinician.",
+  "updated_at": "2026-10-19T10:54:01.473496+00:00",
+  "diabetes": {
+    "key": "diabetes",
+    "title": "Diabetes (Pima)",
+    "citation": "Pima Indians Diabetes Database, UCI Machine Learning Repository. Smith et al., National Institute of Diabetes and Digestive and Kidney Diseases.",
+    "limitation": "Female Pima heritage only, n=768. Zeros in glucose, blood pressure, BMI, insulin, and skin thickness are treated as missing and median-imputed.",
+    "n_rows": 768,
+    "n_positive": 268,
+    "features": [
+      "Pregnancies",
+      "Glucose",
+      "BloodPressure",
+      "SkinThickness",
+      "Insulin",
+      "BMI",
+      "DiabetesPedigreeFunction",
+      "Age"
+    ],
+    "selected_algorithm": "logistic_regression",
+    "selection_rule": "highest mean stratified 5-fold AUROC on the training split",
+    "calibration": "sigmoid",
+    "model_version": "diabetes-20261019",
+    "model_path": "C:\\Users\\Lenevo\\Downloads\\wearable-health-framework\\ml\\models\\diabetes.joblib",
+    "comparison": [
+      {
+        "model": "logistic_regression",
+        "auroc": 0.8125925925925926,
+        "precision": 0.6031746031746031,
+        "recall": 0.7037037037037037,
+        "f1": 0.6495726495726496,
+        "brier": 0.1813730801887153,
+        "cv_auroc_mean": 0.8443812292358803,
+        "cv_auroc_std": 0.016074151820579204
+      },
+      {
+        "model": "random_forest",
+        "auroc": 0.8211111111111111,
+        "precision": 0.6166666666666667,
+        "recall": 0.6851851851851852,
+        "f1": 0.6491228070175439,
+        "brier": 0.1634535375017362,
+        "cv_auroc_mean": 0.835,
+        "cv_auroc_std": 0.020118799411949488
+      },
+      {
+        "model": "xgboost",
+        "auroc": 0.8248148148148149,
+        "precision": 0.6153846153846154,
+        "recall": 0.7407407407407407,
+        "f1": 0.6722689075630253,
+        "brier": 0.1681012213230133,
+        "cv_auroc_mean": 0.8209925249169435,
+        "cv_auroc_std": 0.02451149219965511
+      }
+    ],
+    "calibrated_holdout": {
+      "model": "logistic_regression_calibrated",
+      "auroc": 0.8116666666666666,
+      "precision": 0.6046511627906976,
+      "recall": 0.48148148148148145,
+      "f1": 0.5360824742268041,
+      "brier": 0.1726377342161622
+    },
+    "confusion_matrix_calibrated": [
+      [
+        83,
+        17
+      ],
+      [
+        28,
+        26
+      ]
+    ],
+    "shap_mean_abs": {
+      "Pregnancies": 0.3165466183744314,
+      "Glucose": 0.9068641718196281,
+      "BloodPressure": 0.011310386699954053,
+      "SkinThickness": 0.008778575498869227,
+      "Insulin": 0.02057970397249316,
+      "BMI": 0.5461947752870513,
+      "DiabetesPedigreeFunction": 0.20317329912449453,
+      "Age": 0.15680977734940005
+    },
+    "figures": {
+      "roc": "C:\\Users\\Lenevo\\Downloads\\wearable-health-framework\\docs\\figures\\diabetes_roc.png",
+      "calibration": "C:\\Users\\Lenevo\\Downloads\\wearable-health-framework\\docs\\figures\\diabetes_calibration.png",
+      "confusion_matrix": "C:\\Users\\Lenevo\\Downloads\\wearable-health-framework\\docs\\figures\\diabetes_confusion.png",
+      "shap": "C:\\Users\\Lenevo\\Downloads\\wearable-health-framework\\docs\\figures\\diabetes_shap.png"
+    },
+    "threshold_note": "Precision, recall, and F1 use a 0.5 cutoff. Calibration pulls probabilities toward the real event rate, so 0.5 is a high bar when events are uncommon. The risk score uses the probability itself. Quote AUROC and Brier."
+  },
+  "cardiac": {
+    "key": "cardiac",
+    "title": "Cardiovascular 10-year CHD (Framingham teaching extract)",
+    "citation": "Framingham Heart Study teaching extract, as distributed for coursework and Kaggle (TenYearCHD). Cite the Framingham Heart Study and the mirror used.",
+    "limitation": "Historic US cohort teaching file, about 4,000 exams. Not an Indian population model and not the restricted NHLBI release.",
+    "n_rows": 4238,
+    "n_positive": 644,
+    "features": [
+      "male",
+      "age",
+      "currentSmoker",
+      "cigsPerDay",
+      "BPMeds",
+      "prevalentStroke",
+      "prevalentHyp",
+      "diabetes",
+      "totChol",
+      "sysBP",
+      "diaBP",
+      "BMI",
+      "heartRate",
+      "glucose"
+    ],
+    "selected_algorithm": "logistic_regression",
+    "selection_rule": "highest mean stratified 5-fold AUROC on the training split",
+    "calibration": "sigmoid",
+    "model_version": "cardiac-20261019",
+    "model_path": "C:\\Users\\Lenevo\\Downloads\\wearable-health-framework\\ml\\models\\cardiac.joblib",
+    "comparison": [
+      {
+        "model": "logistic_regression",
+        "auroc": 0.6987094478765727,
+        "precision": 0.24752475247524752,
+        "recall": 0.5813953488372093,
+        "f1": 0.3472222222222222,
+        "brier": 0.21138601624419584,
+        "cv_auroc_mean": 0.7319307724778388,
+        "cv_auroc_std": 0.024627450276911718
+      },
+      {
+        "model": "random_forest",
+        "auroc": 0.6683917154532026,
+        "precision": 0.2967032967032967,
+        "recall": 0.20930232558139536,
+        "f1": 0.24545454545454545,
+        "brier": 0.1464120781337652,
+        "cv_auroc_mean": 0.712006753904601,
+        "cv_auroc_std": 0.02123464984735743
+      },
+      {
+        "model": "xgboost",
+        "auroc": 0.6732649782751667,
+        "precision": 0.2361111111111111,
+        "recall": 0.5271317829457365,
+        "f1": 0.3261390887290168,
+        "brier": 0.2015707790851593,
+        "cv_auroc_mean": 0.7094301392992823,
+        "cv_auroc_std": 0.0237000060444003
+      }
+    ],
+    "calibrated_holdout": {
+      "model": "logistic_regression_calibrated",
+      "auroc": 0.6985261614430033,
+      "precision": 0.4375,
+      "recall": 0.05426356589147287,
+      "f1": 0.09655172413793103,
+      "brier": 0.1216911186428802
+    },
+    "confusion_matrix_calibrated": [
+      [
+        710,
+        9
+      ],
+      [
+        122,
+        7
+      ]
+    ],
+    "shap_mean_abs": {
+      "male": 0.18443782932090177,
+      "age": 0.5215149424789849,
+      "currentSmoker": 0.005076802139136729,
+      "cigsPerDay": 0.2849376409867598,
+      "BPMeds": 0.03187132409232721,
+      "prevalentStroke": 0.0049176191110418405,
+      "prevalentHyp": 0.06158555429815585,
+      "diabetes": 0.015507267500908601,
+      "totChol": 0.07308592764139207,
+      "sysBP": 0.19580024633366694,
+      "diaBP": 0.00261148255508169,
+      "BMI": 0.01819833372891807,
+      "heartRate": 0.01473095897152083,
+      "glucose": 0.0784693790856413
+    },
+    "figures": {
+      "roc": "C:\\Users\\Lenevo\\Downloads\\wearable-health-framework\\docs\\figures\\cardiac_roc.png",
+      "calibration": "C:\\Users\\Lenevo\\Downloads\\wearable-health-framework\\docs\\figures\\cardiac_calibration.png",
+      "confusion_matrix": "C:\\Users\\Lenevo\\Downloads\\wearable-health-framework\\docs\\figures\\cardiac_confusion.png",
+      "shap": "C:\\Users\\Lenevo\\Downloads\\wearable-health-framework\\docs\\figures\\cardiac_shap.png"
+    },
+    "threshold_note": "Precision, recall, and F1 use a 0.5 cutoff. Calibration pulls probabilities toward the real event rate, so 0.5 is a high bar when events are uncommon. The risk score uses the probability itself. Quote AUROC and Brier."
+  }
+}

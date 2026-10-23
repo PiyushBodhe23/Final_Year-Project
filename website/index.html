@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PulseVanguard AI — Clear health insight from your wearables</title>
+  <meta name="description" content="PulseVanguard AI brings your wearable heart rate, oxygen, sleep, and activity into one place — so you, your family, and your care team can spot changes earlier." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #14282B;
+      --muted: #4A6367;
+      --soft: #E7F2F0;
+      --surface: #F4FAF8;
+      --teal: #1B6B66;
+      --teal-deep: #0E4542;
+      --sand: #F7F1E8;
+      --line: rgba(20, 40, 43, 0.1);
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Outfit", sans-serif;
+      color: var(--ink);
+      background: var(--surface);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .wrap {
+      width: min(1120px, calc(100% - 2.5rem));
+      margin-inline: auto;
+    }
+
+    /* —— Nav —— */
+    .nav {
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.35rem 0;
+      width: min(1120px, calc(100% - 2.5rem));
+      margin-inline: auto;
+      animation: fade-up 0.8s ease both;
+    }
+
+    .nav-brand {
+      font-family: "Fraunces", serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+      color: var(--white);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.94rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .nav-links a:hover { color: #fff; }
+
+    /* —— Hero: one composition, brand first, full-bleed —— */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      align-items: end;
+      padding: 7.5rem 0 4.5rem;
+      color: var(--white);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero-media {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(105deg, rgba(14, 69, 66, 0.88) 0%, rgba(14, 69, 66, 0.55) 42%, rgba(20, 40, 43, 0.35) 100%),
+        url("https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=2000&q=80")
+          center / cover no-repeat;
+      transform: scale(1.04);
+      animation: slow-zoom 18s ease-out both;
+    }
+
+    .hero-media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 40%, transparent 20%, rgba(14, 69, 66, 0.35) 100%);
+    }
+
+    .hero .wrap {
+      animation: fade-up 1s ease 0.15s both;
+    }
+
+    .brand {
+      font-family: "Fraunces", serif;
+      font-size: clamp(3.1rem, 9vw, 5.6rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.035em;
+      max-width: 11ch;
+    }
+
+    .brand em {
+      font-style: normal;
+      opacity: 0.78;
+      font-weight: 500;
+    }
+
+    .headline {
+      margin-top: 1.4rem;
+      font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+      font-weight: 500;
+      max-width: 26ch;
+      letter-spacing: -0.015em;
+      line-height: 1.3;
+    }
+
+    .support {
+      margin-top: 0.85rem;
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.86);
+      max-width: 34rem;
+      font-weight: 400;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1.85rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem 1.4rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-light {
+      background: var(--white);
+      color: var(--teal-deep);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .btn-outline:hover { background: rgba(255, 255, 255, 0.1); }
+
+    .btn-teal {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .btn-teal:hover { background: var(--teal-deep); }
+
+    /* —— Sections —— */
+    section {
+      padding: 5rem 0;
+    }
+
+    .section-kicker {
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 0.7rem;
+    }
+
+    h2 {
+      font-family: "Fraunces", serif;
+      font-size: clamp(1.85rem, 3.6vw, 2.55rem);
+      letter-spacing: -0.025em;
+      line-height: 1.12;
+      font-weight: 650;
+      margin-bottom: 0.85rem;
+      max-width: 18ch;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.08rem;
+      max-width: 38rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Why it matters */
+    .why {
+      background:
+        linear-gradient(180deg, var(--soft) 0%, var(--surface) 100%);
+    }
+
+    .why-copy {
+      max-width: 40rem;
+    }
+
+    .why-copy p + p {
+      margin-top: 1rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    /* How it helps — 3 human steps, no cards */
+    .how {
+      background: var(--white);
+      border-block: 1px solid var(--line);
+    }
+
+    .flow {
+      margin-top: 2.5rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem 2rem;
+    }
+
+    .flow article {
+      border-top: 2px solid var(--teal);
+      padding-top: 1.15rem;
+    }
+
+    .flow .num {
+      font-family: "Fraunces", serif;
+      font-size: 1.35rem;
+      color: var(--teal);
+      font-weight: 700;
+      margin-bottom: 0.55rem;
+    }
+
+    .flow h3 {
+      font-size: 1.2rem;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.4rem;
+    }
+
+    .flow p {
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    /* Everyday picture */
+    .everyday {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .everyday-photo {
+      min-height: 420px;
+      background:
+        linear-gradient(160deg, rgba(27, 107, 102, 0.15), rgba(20, 40, 43, 0.25)),
+        url("https://images.unsplash.com/photo-1510017803434-a899398f821e?auto=format&fit=crop&w=1400&q=80")
+          center / cover no-repeat;
+      animation: fade-up 1s ease both;
+    }
+
+    .benefit-list {
+      margin-top: 1.75rem;
+      display: grid;
+      gap: 1.15rem;
+    }
+
+    .benefit-list li {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .benefit-list strong {
+      display: block;
+      font-weight: 650;
+      font-size: 1.05rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .benefit-list span {
+      color: var(--muted);
+      font-size: 0.97rem;
+    }
+
+    /* Peace of mind band */
+    .peace {
+      background:
+        linear-gradient(135deg, var(--teal-deep) 0%, #1B6B66 55%, #2A8A83 100%);
+      color: #fff;
+      padding: 4.5rem 0;
+    }
+
+    .peace h2 {
+      color: #fff;
+      max-width: 22ch;
+    }
+
+    .peace .lead {
+      color: rgba(255, 255, 255, 0.84);
+    }
+
+    .peace .cta-row { margin-top: 1.6rem; }
+
+    .note {
+      margin-top: 1.5rem;
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 36rem;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2.75rem 0;
+      border-top: 1px solid var(--line);
+      background: var(--sand);
+    }
+
+    .footer-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: baseline;
+    }
+
+    footer strong {
+      font-family: "Fraunces", serif;
+      font-size: 1.1rem;
+    }
+
+    footer p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      max-width: 28rem;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slow-zoom {
+      from { transform: scale(1.08); }
+      to { transform: scale(1.02); }
+    }
+
+    @media (max-width: 900px) {
+      .flow { grid-template-columns: 1fr; gap: 1.75rem; }
+      .everyday { grid-template-columns: 1fr; }
+      .everyday-photo { min-height: 280px; order: -1; }
+    }
+
+    @media (max-width: 720px) {
+      .nav-links { display: none; }
+      .hero { padding-top: 6.5rem; align-items: center; }
+      .brand { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="nav-brand" href="/">PulseVanguard AI</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#why">Why it matters</a>
+      <a href="#how">How it helps</a>
+      <a href="#everyday">For you</a>
+      <a href="#start">Get started</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-label="Welcome">
+      <div class="hero-media" role="img" aria-label="Person outdoors checking wellness on a wearable"></div>
+      <div class="wrap">
+        <h1 class="brand">Pulse<em>Vanguard</em> AI</h1>
+        <p class="headline">Your wearables, finally speaking one clear language about your health.</p>
+        <p class="support">
+          We gather heart rate, oxygen, sleep, and activity from the devices you already wear —
+          then show what is steady, what is changing, and when someone should take a closer look.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-light" href="#start">Start with your health</a>
+          <a class="btn btn-outline" href="#how">See how it helps</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="why" class="why">
+      <div class="wrap reveal">
+        <p class="section-kicker">Why it matters</p>
+        <h2>Health data is everywhere. Understanding is not.</h2>
+        <div class="why-copy">
+          <p class="lead">
+            Watches and phones already track how you feel day to day. The hard part is making sense of it
+            before something becomes urgent.
+          </p>
+          <p>
+            PulseVanguard AI brings those signals together so you are not switching between apps,
+            guessing from one number, or waiting until symptoms are obvious. You get a calm,
+            plain-language picture of risk — shared with the people who care for you when it matters.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="how">
+      <div class="wrap reveal">
+        <p class="section-kicker">How it helps</p>
+        <h2>Three simple steps toward earlier awareness.</h2>
+        <p class="lead">No jargon. Just a clearer path from your wearable to timely guidance.</p>
+        <div class="flow">
+          <article>
+            <div class="num">01</div>
+            <h3>Bring your signals together</h3>
+            <p>Heart rate, SpO₂, breathing, temperature, and activity sit in one place — no matter which brand of watch you use.</p>
+          </article>
+          <article>
+            <div class="num">02</div>
+            <h3>See how you are trending</h3>
+            <p>We look at recent patterns, not only today’s reading, and summarize risk in language you can act on.</p>
+          </article>
+          <article>
+            <div class="num">03</div>
+            <h3>Get the right people involved</h3>
+            <p>When risk rises, you, a family member, and a clinician can each receive a clear, role-specific heads-up.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="everyday">
+      <div class="wrap everyday reveal">
+        <div>
+          <p class="section-kicker">Made for real life</p>
+          <h2>Support that feels human, not clinical.</h2>
+          <p class="lead">
+            Whether you are watching your own recovery, caring for a parent, or following a patient’s progress,
+            the goal is the same: fewer surprises, earlier conversations.
+          </p>
+          <ul class="benefit-list">
+            <li>
+              <strong>A score you can see through</strong>
+              <span>Each Health Risk Index shows which readings raised it, using ranges that shift with age.</span>
+            </li>
+            <li>
+              <strong>Plain recommendations</strong>
+              <span>Diet tips, rest guidance, and when to seek medical help — based on your vitals and risk level.</span>
+            </li>
+            <li>
+              <strong>Family &amp; care visibility</strong>
+              <span>Alerts can reach you, a caregiver, and a clinician together, so no one is left guessing alone.</span>
+            </li>
+            <li>
+              <strong>A guide you can ask</strong>
+              <span>An AI assistant explains your numbers in everyday words — educational support, not a diagnosis.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="everyday-photo" role="img" aria-label="Person resting with a fitness watch on their wrist"></div>
+      </div>
+    </section>
+
+    <section id="start" class="peace">
+      <div class="wrap reveal">
+        <p class="section-kicker" style="color: rgba(255,255,255,0.75)">Get started</p>
+        <h2>Ready for a clearer view of your health?</h2>
+        <p class="lead">
+          Open your personal space to review readings, understand risk, and ask for guidance
+          grounded in your own vitals.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-light" href="/demo">Open your health space</a>
+          <a class="btn btn-outline" href="#why">Learn a little more</a>
+        </div>
+        <p class="note">
+          PulseVanguard AI is an educational wellness companion. It does not replace professional medical care.
+          If you feel unwell, contact a clinician or emergency services.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-row">
+      <strong>PulseVanguard AI</strong>
+      <p>Helping people understand wearable health signals earlier — with clarity, care, and honesty.</p>
+    </div>
+  </footer>
+
+  <script>
+    const els = document.querySelectorAll(".reveal");
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add("in");
+        });
+      },
+      { threshold: 0.18 }
+    );
+    els.forEach((el) => io.observe(el));
+  </script>
+</body>
+</html>

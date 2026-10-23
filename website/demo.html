@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PulseVanguard AI — Live demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-start: #5B65DC;
+      --brand-end: #EEEFFD;
+      --ink: #1A1F4A;
+      --muted: #4A5078;
+      --accent: #3D4BC8;
+      --line: rgba(26, 31, 74, 0.12);
+      --surface: rgba(255, 255, 255, 0.72);
+      --sidebar: #1B2158;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Outfit", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(160deg, var(--brand-start) 0%, #8B92E8 38%, var(--brand-end) 100%);
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    .shell {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: var(--sidebar);
+      color: #F4F5FF;
+      padding: 1.25rem 1.1rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .side-brand {
+      font-family: "Fraunces", serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    .side-brand a { color: #fff; }
+    .side-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 0.35rem;
+    }
+    select, input, button, textarea {
+      font-family: inherit;
+      font-size: 0.92rem;
+    }
+    select, input[type="search"], .sidebar input {
+      width: 100%;
+      padding: 0.55rem 0.65rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border-radius: 0;
+    }
+    .sidebar input::placeholder { color: rgba(255,255,255,0.45); }
+    select option { color: #1A1F4A; }
+    .patient-card {
+      background: rgba(255,255,255,0.08);
+      padding: 0.85rem;
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+    .patient-card strong { display: block; font-size: 1.05rem; margin-bottom: 0.3rem; }
+    .metric-row { display: flex; justify-content: space-between; gap: 0.5rem; opacity: 0.92; }
+    .apps { display: grid; gap: 0.4rem; }
+    .app-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .app-row button {
+      padding: 0.28rem 0.5rem;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+    }
+    .app-row button.on { background: #fff; color: var(--accent); }
+    .main { padding: 1.25rem 1.5rem 2.5rem; overflow: auto; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.1rem;
+      color: #fff;
+    }
+    .topbar h1 {
+      font-family: "Fraunces", serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+    }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .kpi {
+      background: var(--surface);
+      padding: 0.9rem 1rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(26, 31, 74, 0.08);
+    }
+    .kpi span { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .kpi b { display: block; font-family: "Fraunces", serif; font-size: 1.55rem; margin-top: 0.2rem; text-transform: capitalize; }
+    .band-low { color: #1B6B66; }
+    .band-moderate { color: #8A5A12; }
+    .band-high { color: #B45309; }
+    .band-critical { color: #B42318; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 0.85rem;
+    }
+    .panel {
+      background: var(--surface);
+      padding: 1rem 1.1rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(26, 31, 74, 0.08);
+    }
+    .why-panel { margin-bottom: 0.85rem; }
+    .driver { margin: 0.45rem 0 0.65rem; }
+    .driver-top { display: flex; justify-content: space-between; gap: 0.6rem; font-size: 0.86rem; }
+    .bar {
+      height: 7px;
+      background: rgba(26, 31, 74, 0.08);
+      border-radius: 99px;
+      margin-top: 0.28rem;
+      overflow: hidden;
+    }
+    .bar i {
+      display: block;
+      height: 100%;
+      border-radius: 99px;
+      background: var(--accent);
+    }
+    .bar i.watch { background: #C2410C; }
+    .bar i.critical { background: #B42318; }
+    .bar i.normal { background: #1B6B66; }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.7rem; }
+    .chip {
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: rgba(61, 75, 200, 0.1);
+      color: var(--accent);
+      padding: 0.28rem 0.5rem;
+      border-radius: 99px;
+    }
+    .footer-note {
+      margin-top: 1rem;
+      color: rgba(255,255,255,0.88);
+      font-size: 0.82rem;
+      max-width: 62rem;
+    }
+    .charts { margin-top: 0.85rem; }
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1rem;
+    }
+    .chart-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+    .chart-card svg { width: 100%; height: auto; display: block; }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.7rem; font-size: 0.78rem; color: var(--muted); margin-top: 0.35rem; }
+    .legend i { display: inline-block; width: 14px; height: 3px; margin-right: 0.3rem; vertical-align: middle; }
+    .panel h2 {
+      font-family: "Fraunces", serif;
+      font-size: 1.2rem;
+      margin-bottom: 0.65rem;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th, td { text-align: left; padding: 0.35rem 0.3rem; border-bottom: 1px solid var(--line); }
+    .chat-log { max-height: 220px; overflow: auto; margin-bottom: 0.6rem; font-size: 0.9rem; }
+    .chat-log .me { color: var(--accent); margin: 0.4rem 0; }
+    .chat-log .bot { color: var(--ink); margin: 0.4rem 0; }
+    .chat-row { display: flex; gap: 0.4rem; }
+    .chat-row input {
+      flex: 1;
+      padding: 0.55rem;
+      border: 1px solid var(--line);
+    }
+    .chat-row button, .ingest {
+      padding: 0.55rem 0.85rem;
+      border: 0;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+    }
+    .chat-row button:disabled { opacity: 0.6; cursor: wait; }
+    .ingest { margin-top: 0.6rem; width: 100%; }
+    .alerts { font-size: 0.85rem; }
+    .alerts article { padding: 0.5rem 0; border-bottom: 1px solid var(--line); }
+    .muted { color: var(--muted); font-size: 0.85rem; }
+    @media (max-width: 980px) {
+      .shell { grid-template-columns: 1fr; }
+      .kpis, .grid, .chart-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="side-brand"><a href="http://127.0.0.1:8000/">PulseVanguard AI</a></div>
+      <div>
+        <div class="side-label">Patient</div>
+        <input id="search" type="search" placeholder="Search name or ID…" />
+        <select id="patientSelect" style="margin-top:0.45rem"></select>
+      </div>
+      <div class="patient-card" id="patientCard">Select a patient</div>
+      <div>
+        <div class="side-label">Add patient to dataset</div>
+        <input id="newName" placeholder="Full name" />
+        <input id="newAge" type="number" min="1" max="120" placeholder="Age" style="margin-top:0.45rem" />
+        <select id="newGender" style="margin-top:0.45rem">
+          <option value="">Gender</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+        </select>
+        <button class="ingest" id="addUserBtn" type="button">Add to dataset</button>
+        <p class="muted" id="addMeta" style="margin-top:0.45rem;color:rgba(255,255,255,0.7)"></p>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <h1>Your health space</h1>
+        <a href="http://127.0.0.1:8000/" style="color:#fff;opacity:.9">Back to site</a>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><span>HRI</span><b id="kpiHri">—</b></div>
+        <div class="kpi"><span>Risk band</span><b id="kpiBand">—</b></div>
+        <div class="kpi"><span>Heart rate</span><b id="kpiHr">—</b></div>
+        <div class="kpi"><span>SpO₂</span><b id="kpiSpo2">—</b></div>
+      </div>
+      <p class="muted" id="trend" style="margin-bottom:0.9rem;color:#fff"></p>
+      <section class="panel why-panel" id="whyPanel">
+        <h2>Why this score</h2>
+        <div class="chips" id="chips"></div>
+        <div id="drivers"></div>
+      </section>
+      <div class="grid">
+        <section class="panel">
+          <h2>Past readings</h2>
+          <div style="overflow:auto;max-height:280px">
+            <table>
+              <thead><tr><th>Time</th><th>HR</th><th>SpO₂</th><th>RR</th><th>Temp</th><th>Steps</th></tr></thead>
+              <tbody id="histBody"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="panel">
+          <h2>Forecast</h2>
+          <div style="overflow:auto;max-height:280px">
+            <table>
+              <thead><tr><th>+h</th><th>HR</th><th>SpO₂</th><th>HRI</th><th>Band</th></tr></thead>
+              <tbody id="fcBody"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="panel">
+          <h2>Alerts</h2>
+          <div class="alerts" id="alerts"></div>
+        </section>
+        <section class="panel">
+          <h2>AI health assistant</h2>
+          <p class="muted" style="margin:-0.35rem 0 0.55rem">Advice stays tied to this person’s vitals, age-adjusted ranges, and risk band.</p>
+          <div class="chat-log" id="chatLog"></div>
+          <div class="chat-row">
+            <input id="chatInput" placeholder="Ask for advice based on this patient’s vitals & risk band…" />
+            <button type="button" id="chatSend">Send</button>
+          </div>
+        </section>
+      </div>
+      <section class="panel charts" id="reportCharts">
+        <h2>Performance report</h2>
+        <p class="muted" style="margin:-0.25rem 0 0.75rem">Recent readings and the short forecast, plotted from this patient’s own vitals.</p>
+        <div class="chart-grid">
+          <div class="chart-card">
+            <h3>Health Risk Index</h3>
+            <svg id="hriChart" viewBox="0 0 640 240" role="img" aria-label="Health Risk Index over time"></svg>
+            <div class="legend">
+              <span><i style="background:#3D4BC8"></i>Past HRI</span>
+              <span><i style="background:#1B6B66"></i>Forecast</span>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3>Heart rate and oxygen</h3>
+            <svg id="vitalChart" viewBox="0 0 640 240" role="img" aria-label="Heart rate and oxygen over time"></svg>
+            <div class="legend">
+              <span><i style="background:#C2410C"></i>Heart rate</span>
+              <span><i style="background:#1B6B66"></i>SpO₂</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <p class="footer-note">PulseVanguard AI is an educational wellness companion. Scores and alerts are simulated from synthetic readings and are not a diagnosis. If you feel unwell, contact a clinician or emergency services.</p>
+    </main>
+  </div>
+  <script>
+    const API =
+      location.port === "8000" && (location.hostname === "127.0.0.1" || location.hostname === "localhost")
+        ? ""
+        : "http://127.0.0.1:8000";
+    let ids = [];
+    let patients = [];
+    let currentId = "P001";
+    let dash = null;
+    let chatting = false;
+
+    const $ = (id) => document.getElementById(id);
+
+    async function apiFetch(path, options = {}, timeoutMs = 20000) {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), timeoutMs);
+      try {
+        const res = await fetch(`${API}${path}`, { ...options, signal: ctrl.signal });
+        return res;
+      } finally {
+        clearTimeout(t);
+      }
+    }
+
+    async function loadPatients() {
+      const res = await apiFetch("/patients", {}, 60000);
+      if (!res.ok) {
+        $("patientCard").textContent = "Could not load patients.";
+        return;
+      }
+      const data = await res.json();
+      const roster = Array.isArray(data.patients) ? data.patients : [];
+      const fallback = (data.patient_ids || []).map((id) => ({ patient_id: id, display_name: id }));
+      patients = roster.length ? roster : fallback;
+      ids = patients.map((p) => p.patient_id);
+      applySearch();
+      if (ids.length) await loadDashboard(ids.includes(currentId) ? currentId : ids[0]);
+    }
+
+    function applySearch() {
+      const q = ($("search").value || "").trim().toLowerCase();
+      const filtered = q
+        ? patients.filter((p) => {
+            const blob = `${p.patient_id || ""} ${p.display_name || ""} ${p.gender || ""} ${p.age || ""}`.toLowerCase();
+            return blob.includes(q);
+          })
+        : patients;
+      fillSelect(filtered, Boolean(q) && filtered.length === 1);
+    }
+
+    function fillSelect(list, autoLoad) {
+      const sel = $("patientSelect");
+      if (!list.length) {
+        sel.innerHTML = `<option value="">No matches</option>`;
+        return;
+      }
+      sel.innerHTML = list.map((p) => {
+        const id = p.patient_id || p;
+        const name = (p.display_name || "").trim();
+        const label = name && name !== id ? `${name} (${id})` : id;
+        return `<option value="${id}">${label}</option>`;
+      }).join("");
+      const inList = list.some((p) => (p.patient_id || p) === currentId);
+      const nextId = inList ? currentId : (list[0].patient_id || list[0]);
+      sel.value = nextId;
+      if (autoLoad && nextId && nextId !== currentId) loadDashboard(nextId);
+    }
+
+    $("search").addEventListener("input", applySearch);
+    $("search").addEventListener("keydown", (e) => {
+      if (e.key !== "Enter") return;
+      const sel = $("patientSelect");
+      if (sel.value) loadDashboard(sel.value);
+    });
+
+    $("patientSelect").addEventListener("change", (e) => loadDashboard(e.target.value));
+
+    async function loadDashboard(pid) {
+      currentId = pid;
+      const res = await apiFetch(`/patients/${encodeURIComponent(pid)}/dashboard?horizon_hours=6`);
+      if (!res.ok) {
+        $("patientCard").textContent = "No data for " + pid;
+        return;
+      }
+      dash = await res.json();
+      renderDash();
+    }
+
+    function bandClass(band) {
+      const name = String(band || "").toLowerCase();
+      return ["low", "moderate", "high", "critical"].includes(name) ? `band-${name}` : "";
+    }
+
+    function renderDrivers(isNew) {
+      const box = $("drivers");
+      const chips = $("chips");
+      if (isNew) {
+        chips.innerHTML = "";
+        box.innerHTML = "<p class='muted'>A score appears after the first wearable reading.</p>";
+        return;
+      }
+      const bits = [];
+      if (dash.age_profile_label) bits.push(`<span class="chip">${dash.age_profile_label}</span>`);
+      if (dash.risk_method) bits.push(`<span class="chip">${String(dash.risk_method).replaceAll("_", " ")}</span>`);
+      if (dash.trend_note) bits.push(`<span class="chip">Trend applied</span>`);
+      if (dash.cooldown_note) bits.push(`<span class="chip">${dash.cooldown_note}</span>`);
+      chips.innerHTML = bits.join("");
+      const drivers = dash.drivers || [];
+      const maxPts = Math.max(28, ...drivers.map((d) => Number(d.points) || 0));
+      box.innerHTML = drivers.map((d) => {
+        const pts = Number(d.points) || 0;
+        const width = Math.max(4, Math.round((pts / maxPts) * 100));
+        const status = d.status || "normal";
+        return `<div class="driver">
+          <div class="driver-top"><span>${d.label} · ${d.value ?? "—"}</span><strong>+${pts.toFixed(0)}</strong></div>
+          <div class="bar"><i class="${status}" style="width:${width}%"></i></div>
+          <div class="muted">${d.note || ""}</div>
+        </div>`;
+      }).join("") || "<p class='muted'>No scored vitals yet.</p>";
+    }
+
+    function renderDash() {
+      const v = dash.vitals || {};
+      const isNew = Boolean(dash.is_new) || !(dash.history || []).length;
+      $("kpiHri").textContent = isNew || dash.hri == null ? "—" : Number(dash.hri).toFixed(1);
+      const bandEl = $("kpiBand");
+      bandEl.textContent = isNew || !dash.risk_band ? "—" : String(dash.risk_band);
+      bandEl.className = isNew ? "" : bandClass(dash.risk_band);
+      $("kpiHr").textContent = v.heart_rate ?? "—";
+      $("kpiSpo2").textContent = v.spo2 ?? "—";
+      $("trend").textContent = isNew
+        ? "Newly enrolled — no wearable readings or past data yet."
+        : (dash.trend_summary || "");
+      renderDrivers(isNew);
+      $("patientCard").innerHTML = `
+        <strong>${dash.display_name && dash.display_name !== dash.patient_id ? dash.display_name : dash.patient_id}</strong>
+        <div class="metric-row"><span>ID</span><span>${dash.patient_id}</span></div>
+        <div class="metric-row"><span>Age</span><span>${(dash.demographics || {}).age ?? v.age ?? "—"}</span></div>
+        <div class="metric-row"><span>Gender</span><span>${(dash.demographics || {}).gender ?? v.gender ?? "—"}</span></div>
+        <div class="metric-row"><span>Heart rate</span><span>${v.heart_rate ?? "—"} bpm</span></div>
+        <div class="metric-row"><span>SpO₂</span><span>${v.spo2 ?? "—"}%</span></div>
+        <div class="metric-row"><span>Resp. rate</span><span>${v.respiratory_rate ?? "—"}</span></div>
+        <div class="metric-row"><span>Temp</span><span>${v.temperature ?? "—"} °C</span></div>
+        <div class="metric-row"><span>BP</span><span>${v.blood_pressure_sys ?? "—"}/${v.blood_pressure_dia ?? "—"}</span></div>
+        <div class="metric-row"><span>Steps</span><span>${v.steps ?? "—"}</span></div>
+      `;
+      if (isNew) {
+        $("histBody").innerHTML = `<tr><td colspan="6" class="muted">No past readings — newly created patient.</td></tr>`;
+        $("fcBody").innerHTML = `<tr><td colspan="5" class="muted">No forecast until vitals are recorded.</td></tr>`;
+        $("alerts").innerHTML = "<p class='muted'>No alerts — waiting for first wearable reading.</p>";
+        renderCharts(true);
+        return;
+      }
+      $("histBody").innerHTML = (dash.history || []).slice(-16).reverse().map((h) => `
+        <tr>
+          <td>${String(h.timestamp || "").slice(0, 16)}</td>
+          <td>${h.heart_rate}</td><td>${h.spo2}</td>
+          <td>${h.respiratory_rate}</td><td>${h.temperature}</td><td>${h.steps}</td>
+        </tr>`).join("") || `<tr><td colspan="6" class="muted">No past readings.</td></tr>`;
+      $("fcBody").innerHTML = ((dash.prediction || {}).forecast || []).map((f) => `
+        <tr>
+          <td>${f.hour_ahead}</td><td>${f.heart_rate}</td><td>${f.spo2}</td>
+          <td>${f.predicted_hri}</td><td>${f.risk_band}</td>
+        </tr>`).join("") || `<tr><td colspan="5" class="muted">No forecast.</td></tr>`;
+      $("alerts").innerHTML = (dash.alerts || []).map((a) => `
+        <article><strong>${a.channel}</strong> · ${a.title}<div class="muted">${a.message}</div></article>
+      `).join("") || "<p class='muted'>No alerts.</p>";
+      renderCharts(false);
+    }
+
+    function svgEmpty(svg, message) {
+      svg.innerHTML = `<text x="24" y="120" fill="#4A5078" font-size="14" font-family="Outfit, sans-serif">${message}</text>`;
+    }
+
+    function chartFrame(svg) {
+      return {
+        left: 46, right: 16, top: 16, bottom: 32,
+        width: 640, height: 240,
+      };
+    }
+
+    function polyline(points) {
+      return points.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+    }
+
+    function renderCharts(isNew) {
+      const hriSvg = $("hriChart");
+      const vitalSvg = $("vitalChart");
+      const series = (dash && dash.performance) || [];
+      const forecast = ((dash && dash.prediction) || {}).forecast || [];
+      if (isNew || !series.length) {
+        svgEmpty(hriSvg, "No readings yet.");
+        svgEmpty(vitalSvg, "No readings yet.");
+        return;
+      }
+
+      const frame = chartFrame();
+      const plotW = frame.width - frame.left - frame.right;
+      const plotH = frame.height - frame.top - frame.bottom;
+      const n = series.length + forecast.length;
+      const xAt = (i) => frame.left + (n <= 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+      const yAt = (value, min, max) => {
+        const span = Math.max(max - min, 1e-6);
+        return frame.top + (1 - (value - min) / span) * plotH;
+      };
+
+      const hriVals = series.map((p) => Number(p.hri) || 0).concat(forecast.map((p) => Number(p.predicted_hri) || 0));
+      const bands = [
+        { y0: 0, y1: 25, fill: "rgba(27,107,102,0.10)" },
+        { y0: 25, y1: 50, fill: "rgba(180,120,20,0.10)" },
+        { y0: 50, y1: 75, fill: "rgba(194,65,12,0.10)" },
+        { y0: 75, y1: 100, fill: "rgba(180,35,24,0.12)" },
+      ];
+      const hriMin = 0;
+      const hriMax = 100;
+      let hriMarkup = "";
+      bands.forEach((band) => {
+        const y = yAt(band.y1, hriMin, hriMax);
+        const h = yAt(band.y0, hriMin, hriMax) - y;
+        hriMarkup += `<rect x="${frame.left}" y="${y.toFixed(1)}" width="${plotW}" height="${h.toFixed(1)}" fill="${band.fill}"></rect>`;
+      });
+      [0, 25, 50, 75, 100].forEach((tick) => {
+        const y = yAt(tick, hriMin, hriMax);
+        hriMarkup += `<line x1="${frame.left}" y1="${y.toFixed(1)}" x2="${frame.left + plotW}" y2="${y.toFixed(1)}" stroke="rgba(26,31,74,0.08)"></line>`;
+        hriMarkup += `<text x="4" y="${(y + 4).toFixed(1)}" fill="#4A5078" font-size="11" font-family="Outfit, sans-serif">${tick}</text>`;
+      });
+      const pastPts = series.map((p, i) => [xAt(i), yAt(Number(p.hri) || 0, hriMin, hriMax)]);
+      const futurePts = forecast.map((p, i) => [xAt(series.length + i), yAt(Number(p.predicted_hri) || 0, hriMin, hriMax)]);
+      if (pastPts.length && futurePts.length) futurePts.unshift(pastPts[pastPts.length - 1]);
+      hriMarkup += `<polyline fill="none" stroke="#3D4BC8" stroke-width="2.5" points="${polyline(pastPts)}"></polyline>`;
+      if (futurePts.length > 1) {
+        hriMarkup += `<polyline fill="none" stroke="#1B6B66" stroke-width="2.5" stroke-dasharray="5 4" points="${polyline(futurePts)}"></polyline>`;
+      }
+      pastPts.forEach((p) => {
+        hriMarkup += `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="#3D4BC8"></circle>`;
+      });
+      const first = String(series[0].timestamp || "").slice(5, 16);
+      const last = String(series[series.length - 1].timestamp || "").slice(5, 16);
+      hriMarkup += `<text x="${frame.left}" y="232" fill="#4A5078" font-size="11" font-family="Outfit, sans-serif">${first}</text>`;
+      hriMarkup += `<text x="${frame.left + plotW - 70}" y="232" fill="#4A5078" font-size="11" font-family="Outfit, sans-serif">${last} → forecast</text>`;
+      hriSvg.innerHTML = hriMarkup;
+
+      const hrs = series.map((p) => Number(p.heart_rate) || 0);
+      const spo2s = series.map((p) => Number(p.spo2) || 0);
+      const hrMin = Math.min(40, ...hrs) - 5;
+      const hrMax = Math.max(120, ...hrs) + 5;
+      const spoMin = Math.min(90, ...spo2s) - 1;
+      const spoMax = 100;
+      let vitalMarkup = "";
+      [0, 0.5, 1].forEach((t) => {
+        const y = frame.top + (1 - t) * plotH;
+        vitalMarkup += `<line x1="${frame.left}" y1="${y.toFixed(1)}" x2="${frame.left + plotW}" y2="${y.toFixed(1)}" stroke="rgba(26,31,74,0.08)"></line>`;
+      });
+      const hrPts = hrs.map((v, i) => [xAt(i * (n - 1) / Math.max(series.length - 1, 1)), yAt(v, hrMin, hrMax)]);
+      const spoPts = spo2s.map((v, i) => [xAt(i * (n - 1) / Math.max(series.length - 1, 1)), yAt(v, spoMin, spoMax)]);
+      vitalMarkup += `<polyline fill="none" stroke="#C2410C" stroke-width="2.5" points="${polyline(hrPts)}"></polyline>`;
+      vitalMarkup += `<polyline fill="none" stroke="#1B6B66" stroke-width="2.5" points="${polyline(spoPts)}"></polyline>`;
+      vitalMarkup += `<text x="4" y="${(frame.top + 10).toFixed(1)}" fill="#C2410C" font-size="11" font-family="Outfit, sans-serif">${Math.round(hrMax)}</text>`;
+      vitalMarkup += `<text x="4" y="${(frame.top + plotH).toFixed(1)}" fill="#C2410C" font-size="11" font-family="Outfit, sans-serif">${Math.round(hrMin)}</text>`;
+      vitalMarkup += `<text x="${frame.left}" y="232" fill="#4A5078" font-size="11" font-family="Outfit, sans-serif">${first}</text>`;
+      vitalMarkup += `<text x="${frame.left + plotW - 48}" y="232" fill="#4A5078" font-size="11" font-family="Outfit, sans-serif">${last}</text>`;
+      vitalSvg.innerHTML = vitalMarkup;
+    }
+
+    $("chatSend").addEventListener("click", sendChat);
+    $("chatInput").addEventListener("keydown", (e) => { if (e.key === "Enter") sendChat(); });
+
+    async function sendChat() {
+      const msg = $("chatInput").value.trim();
+      if (!msg || !dash || chatting) return;
+      chatting = true;
+      $("chatInput").value = "";
+      $("chatSend").disabled = true;
+      $("chatLog").insertAdjacentHTML("beforeend", `<div class="me">${msg}</div>`);
+        $("chatLog").insertAdjacentHTML("beforeend", `<div class="bot muted" id="chatWait">Thinking…</div>`);
+      $("chatLog").scrollTop = $("chatLog").scrollHeight;
+      try {
+        const res = await apiFetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: msg,
+            patient_id: currentId,
+            vitals: Object.assign({}, dash.vitals || {}, dash.demographics || {}),
+            hri: dash.hri,
+            risk_band: dash.risk_band,
+            history_text: dash.history_text,
+            forecast_text: dash.forecast_text,
+            trend_summary: dash.trend_summary,
+          }),
+        }, 120000);
+        const wait = document.getElementById("chatWait");
+        if (wait) wait.remove();
+        if (!res.ok) {
+          $("chatLog").insertAdjacentHTML("beforeend", `<div class="bot">Chat failed (${res.status}). Is the demo server running on port 8000?</div>`);
+        } else {
+          const data = await res.json();
+          $("chatLog").insertAdjacentHTML("beforeend", `<div class="bot">${data.reply || "No reply"}</div>`);
+        }
+      } catch (err) {
+        const wait = document.getElementById("chatWait");
+        if (wait) wait.remove();
+        $("chatLog").insertAdjacentHTML(
+          "beforeend",
+          `<div class="bot">Could not reach the assistant. Open <b>http://127.0.0.1:8000/demo</b>. Add GEMINI_API_KEY in .env for Gemini, or keep Ollama running. ${err && err.name === "AbortError" ? "Request timed out." : ""}</div>`
+        );
+      } finally {
+        chatting = false;
+        $("chatSend").disabled = false;
+        $("chatLog").scrollTop = $("chatLog").scrollHeight;
+      }
+    }
+
+    $("addUserBtn").addEventListener("click", async () => {
+      const name = $("newName").value.trim();
+      const age = Number($("newAge").value);
+      const gender = $("newGender").value;
+      if (!name) { $("addMeta").textContent = "Enter a full name."; return; }
+      if (!Number.isInteger(age) || age < 1 || age > 120) {
+        $("addMeta").textContent = "Enter a valid age.";
+        return;
+      }
+      if (gender !== "female" && gender !== "male") {
+        $("addMeta").textContent = "Select female or male.";
+        return;
+      }
+      $("addUserBtn").disabled = true;
+      $("addMeta").textContent = "Writing patient into the dataset…";
+      try {
+        const res = await apiFetch("/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ display_name: name, age, gender }),
+        });
+        const user = await res.json();
+        if (!res.ok) {
+          $("addMeta").textContent = user.detail || "Could not add patient.";
+          return;
+        }
+        $("newName").value = "";
+        $("newAge").value = "";
+        $("newGender").value = "";
+        currentId = user.user_id;
+        $("addMeta").textContent = `Added ${user.user_id} · ${name} (no past vitals — waiting for readings).`;
+        await loadPatients();
+        if (user.user_id) await loadDashboard(user.user_id);
+      } catch (err) {
+        $("addMeta").textContent = "Could not reach the server.";
+      } finally {
+        $("addUserBtn").disabled = false;
+      }
+    });
+
+    loadPatients().catch((err) => {
+      $("patientCard").textContent = "Select a patient";
+      console.error(err);
+    });
+  </script>
+</body>
+</html>

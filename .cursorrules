@@ -1,0 +1,19 @@
+# PreventVital — Cursor Rules
+
+You are helping build PreventVital, a final-year project: an AI preventive healthcare platform.
+Stack: Next.js 14 (App Router, TypeScript, Tailwind, shadcn/ui, ECharts), FastAPI (Python 3.11), SQLAlchemy, scikit-learn, XGBoost, SHAP, Chroma.
+
+This repository also contains an earlier wearable-stream demo (`backend/main.py`, Streamlit `frontend/`, marketing site `web/`). Leave that demo in place unless a task explicitly replaces it. New PreventVital code lives under `backend/app/`, `ml/`, and `docs/`.
+
+## Rules
+- All risk formulas, weights and thresholds live in `backend/app/core/config.py`, never hardcoded elsewhere.
+- Every function has type hints and a docstring explaining the clinical or statistical rationale.
+- Write pytest unit tests for `risk_engine` and `wearable_analytics`.
+- Never present output as diagnosis; include disclaimers in UI and chatbot.
+- Use only public or synthetic data. Never store or request real patient data.
+- Alerts and chat are simulated. No real SMS, email, or pager sends.
+- Keep components small, typed, and reusable. Design tokens: primary `#2563eb`, healthy `#10b981`, warning `#f59e0b`, danger `#ef4444`.
+- Commit-sized changes. After each task, summarise what changed and how to run it.
+
+## Out of scope unless asked
+- Real device SDKs, production auth, cloud deploy, clinical validation claims.
